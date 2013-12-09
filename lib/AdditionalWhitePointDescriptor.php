@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains DetailedTimingDescriptor class.
+ * Contains AdditionalWhitePointDescriptor class.
  *
  * PHP version 5.3
  *
@@ -29,7 +29,6 @@
  */
 namespace EdidCreator;
 
-
-class DetailedTimingDescriptor {
-
+class AdditionalWhitePointDescriptor
+{
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains AdditionalStandardTimingDescriptor class.
+ * Contains EstablishedTiming class.
  *
  * PHP version 5.3
  *
@@ -29,7 +29,6 @@
  */
 namespace EdidCreator;
 
-
-class AdditionalStandardTimingDescriptor {
-
+class EstablishedTiming
+{
 }

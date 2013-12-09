@@ -29,7 +29,6 @@
  */
 namespace EdidCreator;
 
-
-class StandardTiming {
-
+class StandardTiming
+{
 }

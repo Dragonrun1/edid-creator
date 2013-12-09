@@ -34,6 +34,6 @@ namespace EdidCreator;
  *
  * @package EdidCreator
  */
-class ChromaticityCoordinates {
-
+class ChromaticityCoordinates
+{
 }
