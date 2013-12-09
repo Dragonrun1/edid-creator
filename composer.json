@@ -1,0 +1,15 @@
+{
+    "name": "edid-creator/edid-creator",
+    "description": "Basic PHP generator of EDID v1.3 data",
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "Michael Cummings",
+            "email": "Dragonrun1@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+
+    }
+}
