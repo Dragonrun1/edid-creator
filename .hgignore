@@ -1,0 +1,12 @@
+syntax: glob
+.hgsub
+.idea/
+*.komodoproject
+composer.phar
+export/
+junk.php
+phpdoc.xml
+phpunit.xml
+test.php
+upload/
+vendor/
