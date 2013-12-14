@@ -127,7 +127,7 @@ class BasicDisplayParameters extends AbstractEdidObject
      */
     private $videoInputParameters;
     /**
-     * @return integer[integer]
+     * @return integer[]
      */
     public function getAllAsIntegerArray()
     {

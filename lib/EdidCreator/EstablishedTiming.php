@@ -34,7 +34,7 @@ class EstablishedTiming extends AbstractEdidObject
     /**
      * @var integer[]
      */
-    private $establishedTimings;
+    private $establishedTimings = array(0x00, 0x00, 0x00);
     /**
      * @var string[]
      */
@@ -80,7 +80,7 @@ class EstablishedTiming extends AbstractEdidObject
     public function setEstablishedTimings(array $value = null)
     {
         if (is_null($value)) {
-            $this->establishedTimings = array();
+            $this->establishedTimings = array(0x00, 0x00, 0x00);
             return $this;
         }
         if (count($value) != 3) {
@@ -95,6 +95,13 @@ class EstablishedTiming extends AbstractEdidObject
         $this->establishedTimings = $et;
         return $this;
     }
+    /**
+     * @param $value
+     *
+     * @return EstablishedTiming
+     * @throws \InvalidArgumentException
+     * @throws \DomainException
+     */
     public function addEstablishedTiming($value)
     {
         if (!is_string($value)) {
@@ -113,6 +120,13 @@ class EstablishedTiming extends AbstractEdidObject
         $et[$byte] |= (1 << $bit);
         return $this->setEstablishedTimings($et);
     }
+    /**
+     * @param $value
+     *
+     * @return EstablishedTiming
+     * @throws \InvalidArgumentException
+     * @throws \DomainException
+     */
     public function deleteEstablishedTiming($value)
     {
         if (!is_string($value)) {
@@ -131,6 +145,13 @@ class EstablishedTiming extends AbstractEdidObject
         $et[$byte] &= ~(1 << $bit);
         return $this->setEstablishedTimings($et);
     }
+    /**
+     * @param $value
+     *
+     * @return int
+     * @throws \InvalidArgumentException
+     * @throws \DomainException
+     */
     public function hasEstablishedTiming($value)
     {
         if (!is_string($value)) {
@@ -147,5 +168,12 @@ class EstablishedTiming extends AbstractEdidObject
         $bit = $find & 0x07;
         $et = $this->getEstablishedTimings();
         return (bool)$et[$byte] & (1 << $bit);
+    }
+    /**
+     * @return integer[]
+     */
+    public function getAllAsIntegerArray()
+    {
+        return $this->getEstablishedTimings();
     }
 }

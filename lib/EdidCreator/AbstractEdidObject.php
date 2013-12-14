@@ -81,4 +81,8 @@ abstract class AbstractEdidObject
         array_shift($a);
         return ucfirst(strtolower(implode($join, $a)));
     }
+    /**
+     * @return integer[]
+     */
+    abstract public function getAllAsIntegerArray();
 }
