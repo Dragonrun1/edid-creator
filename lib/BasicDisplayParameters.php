@@ -34,7 +34,7 @@ namespace EdidCreator;
  *
  * @package EdidCreator
  */
-class BasicDisplayParameters
+class BasicDisplayParameters extends AbstractEdidObject
 {
     /**
      * Display gamma.
@@ -581,50 +581,5 @@ class BasicDisplayParameters
         $this->videoInputParameters =
             $this->convertToSingleByteArray($value, __FUNCTION__);
         return $this;
-    }
-    /**
-     * @param int|integer[integer] $value
-     * @param string $method
-     *
-     * @return integer[]
-     * @throws \InvalidArgumentException
-     * @throws \LengthException
-     */
-    private function convertToSingleByteArray($value, $method)
-    {
-        if (is_int($value)) {
-            $value = (array)(abs($value));
-        } elseif (!is_array($value)) {
-            $mess = $this->methodToPropertyWords($method)
-                . ' must be an array or convertible to an array';
-            throw new \InvalidArgumentException($mess);
-        }
-        if (count($value) != 1) {
-            $mess = $this->methodToPropertyWords($method)
-                . ' must have a length equal to 1';
-            throw new \LengthException($mess);
-        }
-        $value = array_values($value);
-        $value[0] &= 0xFF;
-        return $value;
-    }
-    /**
-     * Converts camelCase method name to lower case string with first letter on
-     * first word upper cased and have separator character(s) between each word.
-     *
-     * The first word is also dropped so method name like 'setDisplayGamma'
-     * becomes 'Display gamma'
-     *
-     * @param string $method
-     * @param string $join
-     *
-     * @return string
-     */
-    private function methodToPropertyWords($method, $join = ' ')
-    {
-        $re = '/(?<=[a-z])(?=[A-Z])/x';
-        $a = preg_split($re, $method);
-        array_shift($a);
-        return ucfirst(strtolower(implode($join, $a)));
     }
 }

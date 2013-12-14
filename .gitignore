@@ -3,10 +3,12 @@ syntax: glob
 .idea/
 *.komodoproject
 composer.phar
+docs/
 export/
 junk.php
 phpdoc.xml
 phpunit.xml
 test.php
+tests/
 upload/
 vendor/
