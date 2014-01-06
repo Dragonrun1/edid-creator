@@ -137,7 +137,7 @@ class HeaderInformation
         return $this->manufacturerId;
     }
     /**
-     * @return integer[integer]
+     * @return integer[]
      * @throws \LogicException
      */
     public function getProductCode()
@@ -220,7 +220,7 @@ class HeaderInformation
         return $this;
     }
     /**
-     * @param integer|integer[integer]|null $productCode
+     * @param integer|integer[]|null $productCode
      *
      * @return self
      * @throws \InvalidArgumentException

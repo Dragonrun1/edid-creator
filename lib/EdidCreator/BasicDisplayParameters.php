@@ -34,7 +34,7 @@ namespace EdidCreator;
  *
  * @package EdidCreator
  */
-class BasicDisplayParameters extends AbstractEdidObject
+class BasicDisplayParameters extends AbstractEdidComponent
 {
     /**
      * Display gamma.
@@ -188,10 +188,7 @@ class BasicDisplayParameters extends AbstractEdidObject
     {
         $mask = 0x80;
         $videoInputParameters = $this->getVideoInputParameters();
-        if (($videoInputParameters[0] & $mask) != $mask) {
-            return false;
-        }
-        return true;
+        return (bool)($videoInputParameters[0] & $mask);
     }
     /**
      * @param bool $trueOrFalse
@@ -202,12 +199,14 @@ class BasicDisplayParameters extends AbstractEdidObject
     public function setActiveOffFeature($trueOrFalse)
     {
         $trueOrFalse = (bool)$trueOrFalse;
-        $setSupportedFeatures = $this->getSupportedFeatures();
+        $position = 5;
+        $value = $this->getSupportedFeatures();
         if ($trueOrFalse) {
-            $this->setSupportedFeatures($setSupportedFeatures[0] | 0x20);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setSupportedFeatures($setSupportedFeatures[0] & 0xDF);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setSupportedFeatures($value[0]);
         return $this;
     }
     /**
@@ -224,12 +223,14 @@ class BasicDisplayParameters extends AbstractEdidObject
             throw new \LogicException($mess);
         }
         $trueOrFalse = (bool)$trueOrFalse;
-        $videoInputParameters = $this->getVideoInputParameters();
+        $position = 2;
+        $value = $this->getVideoInputParameters();
         if ($trueOrFalse) {
-            $this->setVideoInputParameters($videoInputParameters[0] | 0x04);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setVideoInputParameters($videoInputParameters[0] & 0xFB);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setVideoInputParameters($value[0]);
         return $this;
     }
     /**
@@ -241,12 +242,14 @@ class BasicDisplayParameters extends AbstractEdidObject
     public function setDefaultGtfSupportFeature($trueOrFalse)
     {
         $trueOrFalse = (bool)$trueOrFalse;
-        $setSupportedFeatures = $this->getSupportedFeatures();
+        $position = 0;
+        $value = $this->getSupportedFeatures();
         if ($trueOrFalse) {
-            $this->setSupportedFeatures($setSupportedFeatures[0] | 0x01);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setSupportedFeatures($setSupportedFeatures[0] & 0xFE);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setSupportedFeatures($value[0]);
         return $this;
     }
     /**
@@ -263,12 +266,14 @@ class BasicDisplayParameters extends AbstractEdidObject
             throw new \LogicException($mess);
         }
         $trueOrFalse = (bool)$trueOrFalse;
-        $videoInputParameters = $this->getVideoInputParameters();
+        $position = 0;
+        $value = $this->getVideoInputParameters();
         if ($trueOrFalse) {
-            $this->setVideoInputParameters($videoInputParameters[0] | 0x01);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setVideoInputParameters($videoInputParameters[0] & 0xFE);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setVideoInputParameters($value[0]);
         return $this;
     }
     /**
@@ -358,12 +363,14 @@ class BasicDisplayParameters extends AbstractEdidObject
     public function setPreferredTimingModeFeature($trueOrFalse)
     {
         $trueOrFalse = (bool)$trueOrFalse;
-        $setSupportedFeatures = $this->getSupportedFeatures();
+        $position = 1;
+        $value = $this->getSupportedFeatures();
         if ($trueOrFalse) {
-            $this->setSupportedFeatures($setSupportedFeatures[0] | 0x02);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setSupportedFeatures($setSupportedFeatures[0] & 0xFD);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setSupportedFeatures($value[0]);
         return $this;
     }
     /**
@@ -380,12 +387,14 @@ class BasicDisplayParameters extends AbstractEdidObject
             throw new \LogicException($mess);
         }
         $trueOrFalse = (bool)$trueOrFalse;
-        $videoInputParameters = $this->getVideoInputParameters();
+        $position = 3;
+        $value = $this->getVideoInputParameters();
         if ($trueOrFalse) {
-            $this->setVideoInputParameters($videoInputParameters[0] | 0x08);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setVideoInputParameters($videoInputParameters[0] & 0xF7);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setVideoInputParameters($value[0]);
         return $this;
     }
     /**
@@ -402,12 +411,14 @@ class BasicDisplayParameters extends AbstractEdidObject
             throw new \LogicException($mess);
         }
         $trueOrFalse = (bool)$trueOrFalse;
-        $videoInputParameters = $this->getVideoInputParameters();
+        $position = 0;
+        $value = $this->getVideoInputParameters();
         if ($trueOrFalse) {
-            $this->setVideoInputParameters($videoInputParameters[0] | 0x01);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setVideoInputParameters($videoInputParameters[0] & 0xFE);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setVideoInputParameters($value[0]);
         return $this;
     }
     /**
@@ -424,12 +435,14 @@ class BasicDisplayParameters extends AbstractEdidObject
             throw new \LogicException($mess);
         }
         $trueOrFalse = (bool)$trueOrFalse;
-        $videoInputParameters = $this->getVideoInputParameters();
+        $position = 4;
+        $value = $this->getVideoInputParameters();
         if ($trueOrFalse) {
-            $this->setVideoInputParameters($videoInputParameters[0] | 0x10);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setVideoInputParameters($videoInputParameters[0] & 0xEF);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setVideoInputParameters($value[0]);
         return $this;
     }
     /**
@@ -488,12 +501,14 @@ class BasicDisplayParameters extends AbstractEdidObject
     public function setStandardColorSpaceFeature($trueOrFalse)
     {
         $trueOrFalse = (bool)$trueOrFalse;
-        $setSupportedFeatures = $this->getSupportedFeatures();
+        $position = 2;
+        $value = $this->getSupportedFeatures();
         if ($trueOrFalse) {
-            $this->setSupportedFeatures($setSupportedFeatures[0] | 0x04);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setSupportedFeatures($setSupportedFeatures[0] & 0xFB);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setSupportedFeatures($value[0]);
         return $this;
     }
     /**
@@ -505,12 +520,14 @@ class BasicDisplayParameters extends AbstractEdidObject
     public function setStandbyFeature($trueOrFalse)
     {
         $trueOrFalse = (bool)$trueOrFalse;
-        $setSupportedFeatures = $this->getSupportedFeatures();
+        $position = 7;
+        $value = $this->getSupportedFeatures();
         if ($trueOrFalse) {
-            $this->setSupportedFeatures($setSupportedFeatures[0] | 0x80);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setSupportedFeatures($setSupportedFeatures[0] & 0x7F);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setSupportedFeatures($value[0]);
         return $this;
     }
     /**
@@ -537,12 +554,14 @@ class BasicDisplayParameters extends AbstractEdidObject
     public function setSuspendFeature($trueOrFalse)
     {
         $trueOrFalse = (bool)$trueOrFalse;
-        $setSupportedFeatures = $this->getSupportedFeatures();
+        $position = 6;
+        $value = $this->getSupportedFeatures();
         if ($trueOrFalse) {
-            $this->setSupportedFeatures($setSupportedFeatures[0] | 0x40);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setSupportedFeatures($setSupportedFeatures[0] & 0xBF);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setSupportedFeatures($value[0]);
         return $this;
     }
     /**
@@ -559,12 +578,14 @@ class BasicDisplayParameters extends AbstractEdidObject
             throw new \LogicException($mess);
         }
         $trueOrFalse = (bool)$trueOrFalse;
-        $videoInputParameters = $this->getVideoInputParameters();
+        $position = 1;
+        $value = $this->getVideoInputParameters();
         if ($trueOrFalse) {
-            $this->setVideoInputParameters($videoInputParameters[0] | 0x02);
+            $this->setBitFlag($value[0], $position);
         } else {
-            $this->setVideoInputParameters($videoInputParameters[0] & 0xFD);
+            $this->clearBitFlag($value[0], $position);
         }
+        $this->setVideoInputParameters($value[0]);
         return $this;
     }
     /**
@@ -581,5 +602,13 @@ class BasicDisplayParameters extends AbstractEdidObject
         $this->videoInputParameters =
             $this->convertToSingleByteArray($value, __FUNCTION__);
         return $this;
+    }
+    private function setBitFlag(&$value, $position)
+    {
+        $value |= (1 << $position);
+    }
+    private function clearBitFlag(&$value, $position)
+    {
+        $value &= ~(1 << $position);
     }
 }

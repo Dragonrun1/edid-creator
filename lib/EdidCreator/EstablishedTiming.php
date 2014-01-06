@@ -29,7 +29,7 @@
  */
 namespace EdidCreator;
 
-class EstablishedTiming extends AbstractEdidObject
+class EstablishedTiming extends AbstractEdidComponent
 {
     /**
      * @var integer[]
@@ -83,16 +83,14 @@ class EstablishedTiming extends AbstractEdidObject
             $this->establishedTimings = array(0x00, 0x00, 0x00);
             return $this;
         }
+        $value = array_values($value); // Re-index
         if (count($value) != 3) {
             $mess = $this->methodToPropertyWords(__FUNCTION__)
                 . ' must have a length equal to 3';
             throw new \LengthException($mess);
         }
-        $et = array();
-        foreach ($value as $v) {
-            $et[] = $v & 0xFF;
-        }
-        $this->establishedTimings = $et;
+        $this->byteMaskArray($value);
+        $this->establishedTimings = $value;
         return $this;
     }
     /**
@@ -104,16 +102,7 @@ class EstablishedTiming extends AbstractEdidObject
      */
     public function addEstablishedTiming($value)
     {
-        if (!is_string($value)) {
-            $mess = $this->methodToPropertyWords(__FUNCTION__)
-                . ' requires string value';
-            throw new \InvalidArgumentException($mess);
-        }
-        $find = array_search($value, $this->knownTimings);
-        if (false === $find) {
-            $mess = 'Unknown timing ' . $value;
-            throw new \DomainException($mess);
-        }
+        $find = $this->validateValueInput($value, __FUNCTION__);
         $byte = $find >> 3;
         $bit = $find & 0x07;
         $et = $this->getEstablishedTimings();
@@ -129,16 +118,7 @@ class EstablishedTiming extends AbstractEdidObject
      */
     public function deleteEstablishedTiming($value)
     {
-        if (!is_string($value)) {
-            $mess = $this->methodToPropertyWords(__FUNCTION__)
-                . ' requires string value';
-            throw new \InvalidArgumentException($mess);
-        }
-        $find = array_search($value, $this->knownTimings);
-        if (false === $find) {
-            $mess = 'Unknown timing ' . $value;
-            throw new \DomainException($mess);
-        }
+        $find = $this->validateValueInput($value, __FUNCTION__);
         $byte = $find >> 3;
         $bit = $find & 0x07;
         $et = $this->getEstablishedTimings();
@@ -154,8 +134,31 @@ class EstablishedTiming extends AbstractEdidObject
      */
     public function hasEstablishedTiming($value)
     {
+        $find = $this->validateValueInput($value, __FUNCTION__);
+        $byte = $find >> 3;
+        $bit = $find & 0x07;
+        $et = $this->getEstablishedTimings();
+        return (bool)($et[$byte] & (1 << $bit));
+    }
+    /**
+     * @return integer[]
+     */
+    public function getAllAsIntegerArray()
+    {
+        return $this->getEstablishedTimings();
+    }
+    /**
+     * @param string $value
+     * @param string $method
+     *
+     * @return integer
+     * @throws \InvalidArgumentException
+     * @throws \DomainException
+     */
+    private function validateValueInput($value, $method)
+    {
         if (!is_string($value)) {
-            $mess = $this->methodToPropertyWords(__FUNCTION__)
+            $mess = $this->methodToPropertyWords($method)
                 . ' requires string value';
             throw new \InvalidArgumentException($mess);
         }
@@ -164,16 +167,15 @@ class EstablishedTiming extends AbstractEdidObject
             $mess = 'Unknown timing ' . $value;
             throw new \DomainException($mess);
         }
-        $byte = $find >> 3;
-        $bit = $find & 0x07;
-        $et = $this->getEstablishedTimings();
-        return (bool)$et[$byte] & (1 << $bit);
+        return $find;
     }
     /**
-     * @return integer[]
+     * @param integer[] $array
      */
-    public function getAllAsIntegerArray()
+    private function byteMaskArray(array &$array)
     {
-        return $this->getEstablishedTimings();
+        foreach ($array as &$value) {
+            $value &= 0xFF;
+        }
     }
 }

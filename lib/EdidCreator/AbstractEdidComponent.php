@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains AbstractEdidObject class.
+ * Contains AbstractEdidComponent class.
  *
  * PHP version 5.3
  *
@@ -30,11 +30,11 @@
 namespace EdidCreator;
 
 /**
- * Class AbstractEdidObject
+ * Class AbstractEdidComponent
  *
  * @package EdidCreator
  */
-abstract class AbstractEdidObject
+abstract class AbstractEdidComponent implements EdidComponentInterface
 {
     /**
      * @param int|integer[integer] $value
@@ -81,8 +81,4 @@ abstract class AbstractEdidObject
         array_shift($a);
         return ucfirst(strtolower(implode($join, $a)));
     }
-    /**
-     * @return integer[]
-     */
-    abstract public function getAllAsIntegerArray();
 }
