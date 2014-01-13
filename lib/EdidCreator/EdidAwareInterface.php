@@ -37,4 +37,8 @@ interface EdidAwareInterface
      * @return self
      */
     public function setEdid(EdidBitFieldInterface $edid);
+    /**
+     * @return EdidBitFieldInterface
+     */
+    public function getEdid();
 }

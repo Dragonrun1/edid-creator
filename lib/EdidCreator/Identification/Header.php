@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains EdidInterface interface.
+ * Contains Header class.
  *
  * PHP version 5.3
  *
@@ -27,20 +27,65 @@
  * @copyright 2013 Michael Cummings
  * @license   http://www.gnu.org/copyleft/lesser.html GNU LGPL
  */
-namespace EdidCreator;
+namespace EdidCreator\Identification;
 
-interface EdidInterface
+use EdidCreator\AbstractEdidAwareComponent;
+
+/**
+ * Class Header
+ *
+ * @package EdidCreator
+ */
+class Header extends AbstractEdidAwareComponent
 {
     /**
-     * @return resource
-     * @throws \LogicException
+     * @return string
      */
-    public function getEdid();
+    public function getHeader()
+    {
+        return $this->edid->getBitField($this->fieldLength, $this->offset);
+    }
     /**
-     * @param resource|string $value
+     * @param string|int $value
      *
-     * @return self
      * @throws \InvalidArgumentException
+     * @throws \LengthException
+     * @throws \DomainException
+     * @return self
      */
-    public function setEdid($value = '0x00');
+    public function setHeader($value = '0X00FFFFFFFFFFFF00')
+    {
+        $value = $this->convertValueToBitString($value, $this->fieldLength);
+        $this->edid->setBitField($value, $this->offset);
+        return $this;
+    }
+    /**
+     * @param string|int $value
+     *
+     * @throws \InvalidArgumentException
+     * @throws \LengthException
+     * @throws \DomainException
+     * @return self
+     */
+    public function __invoke($value)
+    {
+        $method = 'set' . basename(__CLASS__);
+        return $this->$method($value);
+    }
+    /**
+     * @var int
+     */
+    private $fieldLength = 64;
+    /**
+     * @var int[]
+     */
+    private $offset = array(0, 0);
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $method = 'get' . basename(__CLASS__);
+        return $this->$method();
+    }
 }

@@ -34,7 +34,7 @@ namespace EdidCreator;
  *
  * @package EdidCreator
  */
-class Edid implements EdidInterface, EdidBitFieldInterface
+class Edid implements EdidBitFieldInterface, EdidComponentInterface
 {
     /**
      * 128 Bytes * 8 value
@@ -193,13 +193,32 @@ class Edid implements EdidInterface, EdidBitFieldInterface
         $hardLimit = 128;
         $bCount = 0;
         while (false !== ($byte = fgetc($fh)) && ++$bCount <= $hardLimit) {
-            $bytes[] = str_pad(decbin(ord($bytes)), 8, '0', STR_PAD_LEFT);
+            $bytes[] = str_pad(decbin(ord($byte)), 8, '0', STR_PAD_LEFT);
         }
         if (false === @fclose($fh)) {
             $mess = 'Failed to close ' . $name;
             throw new \RuntimeException($mess);
         }
         $this->setEdid(implode('', array_reverse($bytes)));
+        return $this;
+    }
+    /**
+     * Used to update the checksum value of the Edid.
+     */
+    public function updateChecksum()
+    {
+        $bytes = array_reverse(str_split($this->getEdid(), 8));
+        $bytes[127] = '00000000';
+        $checksum = 256 - array_reduce(
+                $bytes,
+                function ($sum, $value) {
+                    return ($sum + bindec($value)) & 255;
+                },
+                0
+            );
+        //$checksum = 256 - array_reduce($bytes, array($this, 'checksum'), 0);
+        $checksum = str_pad(decbin($checksum), 8, '0', STR_PAD_LEFT);
+        $this->setBitField($checksum, array(127, 0));
         return $this;
     }
     /**
@@ -222,8 +241,10 @@ class Edid implements EdidInterface, EdidBitFieldInterface
             $mess = 'Could NOT open for writing ' . $name;
             throw new \DomainException($mess);
         }
+        $this->updateChecksum();
         $bytes = array_reverse(str_split($this->getEdid(), 8));
-        for ($i = 0, $bCount = count($bytes);$i < $bCount;++$i) {
+        for ($i = 0, $bCount = count($bytes);$i < $bCount;
+            ++$i) {
             if (false === fwrite($fh, chr(bindec($bytes[$i])), 1)) {
                 @fflush($fh);
                 @fclose($fh);
@@ -245,4 +266,25 @@ class Edid implements EdidInterface, EdidBitFieldInterface
      * @var string
      */
     private $edid;
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $method = 'get' . basename(__CLASS__);
+        return $this->$method();
+    }
+    /**
+     * @param string $value
+     *
+     * @throws \InvalidArgumentException
+     * @throws \LengthException
+     * @throws \DomainException
+     * @return string
+     */
+    public function __invoke($value)
+    {
+        $method = 'set' . basename(__CLASS__);
+        return $this->$method($value);
+    }
 }

@@ -50,18 +50,4 @@ interface EdidBitFieldInterface
      * @throws \InvalidArgumentException
      */
     public function setBitField($value, $offset);
-    /**
-     * @param resource|string $target
-     * @param integer         $shiftBy
-     *
-     * @return resource
-     */
-    //public function shiftLeft($target, $shiftBy);
-    /**
-     * @param resource|string $target
-     * @param integer         $shiftBy
-     *
-     * @return resource
-     */
-    //public function shiftRight($target, $shiftBy);
 }

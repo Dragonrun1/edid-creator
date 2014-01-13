@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains MonitorNameDescriptor class.
+ * Contains ProductCode class.
  *
  * PHP version 5.3
  *
@@ -27,60 +27,65 @@
  * @copyright 2013 Michael Cummings
  * @license   http://www.gnu.org/copyleft/lesser.html GNU LGPL
  */
-namespace EdidCreator;
+namespace EdidCreator\Identification;
 
-class MonitorNameDescriptor
+use EdidCreator\AbstractEdidAwareComponent;
+
+/**
+ * Class ProductCode
+ *
+ * @package EdidCreator
+ */
+class ProductCode extends AbstractEdidAwareComponent
 {
     /**
-     * @var integer[]
+     * @param string|int $value
+     *
+     * @throws \InvalidArgumentException
+     * @throws \LengthException
+     * @throws \DomainException
+     * @return self
      */
-    private $header = array(0x00, 0x00, 0xFC, 0x00);
-    /**
-     * @var string
-     */
-    private $name;
-    /**
-     * @return integer[integer]
-     */
-    public function getAllAsIntegerArray()
+    public function setProductCode($value)
     {
-        $name = $this->getName();
-        if (strlen($name) < 13) {
-            $name = str_split(str_pad($name . "\n", 13));
-        }
-        return array_merge(
-            $this->getHeader(),
-            $name
-        );
+        $value = $this->convertValueToBitString($value, $this->fieldLength);
+        $this->edid->setBitField($value, $this->offset);
+        return $this;
     }
     /**
-     * @return integer[]
+     * @param string|int $value
+     *
+     * @throws \InvalidArgumentException
+     * @throws \LengthException
+     * @throws \DomainException
+     * @return self
      */
-    public function getHeader()
+    public function __invoke($value)
     {
-        return $this->header;
+        $method = 'set' . basename(__CLASS__);
+        return $this->$method($value);
+    }
+    /**
+     * @var int
+     */
+    private $fieldLength = 16;
+    /**
+     * @var int[]
+     */
+    private $offset = array(10, 0);
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $method = 'get' . basename(__CLASS__);
+        return $this->$method();
     }
     /**
      * @return string
      */
-    public function getName()
+    public function getProductCode()
     {
-        return $this->name;
-    }
-    /**
-     * @param string $name
-     *
-     * @return self
-     * @throws \LengthException
-     */
-    public function setName($name)
-    {
-        $name = (string)$name;
-        if (strlen($name) > 13) {
-            $mess = 'Name can be no more than 13 characters long';
-            throw new \LengthException($mess);
-        }
-        $this->name = $name;
-        return $this;
+        return $this->edid->getBitField($this->fieldLength, $this->offset);
     }
 }

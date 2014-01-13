@@ -1,13 +1,13 @@
 <?php
 /**
- * Contains MonitorSerialNumberDescriptor class.
+ * Contains EdidVersionAndRevision class.
  *
  * PHP version 5.3
  *
  * LICENSE:
  * This file is part of Edid Creator which can be used to create a version 1.3 Extended Display Identification Data
  * binary file.
- * Copyright (C) 2013  Michael Cummings
+ * Copyright (C) 2014  Michael Cummings
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
  * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
@@ -24,63 +24,63 @@
  * available in the GNU-GPL.md file.
  *
  * @author    Michael Cummings <mgcummings@yahoo.com>
- * @copyright 2013 Michael Cummings
+ * @copyright 2014 Michael Cummings
  * @license   http://www.gnu.org/copyleft/lesser.html GNU LGPL
  */
-namespace EdidCreator;
+namespace EdidCreator\Identification;
 
-class MonitorSerialNumberDescriptor
+use EdidCreator\AbstractEdidAwareComponent;
+
+class EdidVersionAndRevision extends AbstractEdidAwareComponent
 {
     /**
-     * @var integer[]
+     * @param string|int $value
+     *
+     * @throws \InvalidArgumentException
+     * @throws \LengthException
+     * @throws \DomainException
+     * @return self
      */
-    private $header = array(0x00, 0x00, 0xFF, 0x00);
-    /**
-     * @var string
-     */
-    private $serialNumber;
-    /**
-     * @return integer[]
-     */
-    public function getHeader()
+    public function __invoke($value)
     {
-        return $this->header;
+        $method = 'set' . basename(__CLASS__);
+        return $this->$method($value);
     }
     /**
      * @return string
      */
-    public function getSerialNumber()
+    public function __toString()
     {
-        return $this->serialNumber;
+        $method = 'get' . basename(__CLASS__);
+        return $this->$method();
     }
     /**
-     * @param string|integer $serialNumber
-     *
-     * @return self
-     * @throws \LengthException
+     * @return string
      */
-    public function setSerialNumber($serialNumber)
+    public function getVersionAndRevision()
     {
-        $serialNumber = (string)$serialNumber;
-        if (strlen($serialNumber) > 13) {
-            $mess = 'Serial number can be no more than 13 characters long';
-            throw new \LengthException($mess);
-        }
-        $this->serialNumber = $serialNumber;
+        return $this->edid->getBitField($this->fieldLength, $this->offset);
+    }
+    /**
+     * @param string|int $value
+     *
+     * @throws \InvalidArgumentException
+     * @throws \LengthException
+     * @throws \DomainException
+     * @return self
+     */
+    public function setVersionAndRevision($value = '0X0103')
+    {
+        $value = $this->convertValueToBitString($value, $this->fieldLength);
+        $this->edid->setBitField($value, $this->offset);
         return $this;
     }
     /**
-     * @return integer[integer]
+     * @var int
      */
-    public function getAllAsIntegerArray()
-    {
-        $serialNumber = $this->getSerialNumber();
-        if (strlen($serialNumber) < 13) {
-            $serialNumber = str_split(str_pad($serialNumber . "\n", 13));
-        }
-        return array_merge(
-            $this->getHeader(),
-            $serialNumber
-        );
-    }
+    private $fieldLength = 16;
+    /**
+     * @var int[]
+     */
+    private $offset = array(18, 0);
 }

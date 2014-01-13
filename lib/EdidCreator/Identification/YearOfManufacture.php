@@ -1,13 +1,13 @@
 <?php
 /**
- * Contains EdidComponentInterface Interface.
+ * Contains YearOfManufacture class.
  *
  * PHP version 5.3
  *
  * LICENSE:
  * This file is part of Edid Creator which can be used to create a version 1.3 Extended Display Identification Data
  * binary file.
- * Copyright (C) 2013  Michael Cummings
+ * Copyright (C) 2014  Michael Cummings
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
  * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
@@ -24,29 +24,68 @@
  * available in the GNU-GPL.md file.
  *
  * @author    Michael Cummings <mgcummings@yahoo.com>
- * @copyright 2013 Michael Cummings
+ * @copyright 2014 Michael Cummings
  * @license   http://www.gnu.org/copyleft/lesser.html GNU LGPL
  */
-namespace EdidCreator;
+namespace EdidCreator\Identification;
+
+use EdidCreator\AbstractEdidAwareComponent;
 
 /**
- * Interface EdidComponentInterface
+ * Class YearOfManufacture
  *
  * @package EdidCreator
  */
-interface EdidComponentInterface
+class YearOfManufacture extends AbstractEdidAwareComponent
 {
     /**
-     * @param string $value
+     * @param string|int $value
      *
      * @throws \InvalidArgumentException
      * @throws \LengthException
      * @throws \DomainException
-     * @return string
+     * @return self
      */
-    public function __invoke($value);
+    public function __invoke($value)
+    {
+        $method = 'set' . basename(__CLASS__);
+        return $this->$method($value);
+    }
     /**
      * @return string
      */
-    public function __toString();
+    public function __toString()
+    {
+        $method = 'get' . basename(__CLASS__);
+        return $this->$method();
+    }
+    /**
+     * @return string
+     */
+    public function getYearOfManufacture()
+    {
+        return $this->edid->getBitField($this->fieldLength, $this->offset);
+    }
+    /**
+     * @param string|int $value
+     *
+     * @throws \InvalidArgumentException
+     * @throws \LengthException
+     * @throws \DomainException
+     * @return self
+     */
+    public function setYearOfManufacture($value)
+    {
+        $value = $this->convertValueToBitString($value, $this->fieldLength);
+        $this->edid->setBitField($value, $this->offset);
+        return $this;
+    }
+    /**
+     * @var int
+     */
+    private $fieldLength = 8;
+    /**
+     * @var int[]
+     */
+    private $offset = array(17, 0);
 }
