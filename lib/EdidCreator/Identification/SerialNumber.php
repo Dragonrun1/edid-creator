@@ -47,6 +47,21 @@ class SerialNumber extends AbstractEdidAwareComponent
         return $this->$method($value);
     }
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $method = 'get' . basename(__CLASS__);
+        return $this->$method();
+    }
+    /**
+     * @return string
+     */
+    public function getSerialNumber()
+    {
+        return $this->edid->getBitField($this->offset, $this->fieldLength);
+    }
+    /**
      * @param string|int $value
      *
      * @throws \InvalidArgumentException
@@ -68,19 +83,4 @@ class SerialNumber extends AbstractEdidAwareComponent
      * @var int[]
      */
     private $offset = array(12, 0);
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        $method = 'get' . basename(__CLASS__);
-        return $this->$method();
-    }
-    /**
-     * @return string
-     */
-    public function getSerialNumber()
-    {
-        return $this->edid->getBitField($this->fieldLength, $this->offset);
-    }
 }

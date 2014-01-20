@@ -64,7 +64,7 @@ class YearOfManufacture extends AbstractEdidAwareComponent
      */
     public function getYearOfManufacture()
     {
-        return $this->edid->getBitField($this->fieldLength, $this->offset);
+        return $this->edid->getBitField($this->offset);
     }
     /**
      * @param string|int $value
@@ -76,14 +76,10 @@ class YearOfManufacture extends AbstractEdidAwareComponent
      */
     public function setYearOfManufacture($value)
     {
-        $value = $this->convertValueToBitString($value, $this->fieldLength);
+        $value = $this->convertValueToBitString($value);
         $this->edid->setBitField($value, $this->offset);
         return $this;
     }
-    /**
-     * @var int
-     */
-    private $fieldLength = 8;
     /**
      * @var int[]
      */

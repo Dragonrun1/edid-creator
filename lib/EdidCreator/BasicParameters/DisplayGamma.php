@@ -1,13 +1,12 @@
 <?php
 /**
- * Contains WeekOfManufacture class.
+ * Contains DisplayGamma class.
  *
  * PHP version 5.3
  *
  * LICENSE:
- * This file is part of Edid Creator which can be used to create a version 1.3 Extended Display Identification Data
- * binary file.
- * Copyright (C) 2014  Michael Cummings
+ * This file is part of edid-creater
+ * Copyright (C) 2014 Michael Cummings
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
  * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
@@ -23,20 +22,20 @@
  * You should be able to find a copy of this license in the LICENSE.md file. A copy of the GNU GPL should also be
  * available in the GNU-GPL.md file.
  *
- * @author    Michael Cummings <mgcummings@yahoo.com>
  * @copyright 2014 Michael Cummings
  * @license   http://www.gnu.org/copyleft/lesser.html GNU LGPL
+ * @author    Michael Cummings <mgcummings@yahoo.com>
  */
-namespace EdidCreator\Identification;
+namespace EdidCreator\BasicParameters;
 
 use EdidCreator\AbstractEdidAwareComponent;
 
 /**
- * Class WeekOfManufacture
+ * Class DisplayGamma
  *
- * @package EdidCreator
+ * @package EdidCreator\BasicParameters
  */
-class WeekOfManufacture extends AbstractEdidAwareComponent
+class DisplayGamma extends AbstractEdidAwareComponent
 {
     /**
      * @param string|int $value
@@ -60,12 +59,9 @@ class WeekOfManufacture extends AbstractEdidAwareComponent
         return $this->$method();
     }
     /**
-     * @return string
+     * @var int[]
      */
-    public function getWeekOfManufacture()
-    {
-        return $this->edid->getBitField($this->offset);
-    }
+    private $offset = array(23, 0);
     /**
      * @param string|int $value
      *
@@ -74,14 +70,17 @@ class WeekOfManufacture extends AbstractEdidAwareComponent
      * @throws \DomainException
      * @return self
      */
-    public function setWeekOfManufacture($value)
+    public function setDisplayGamma($value)
     {
         $value = $this->convertValueToBitString($value);
         $this->edid->setBitField($value, $this->offset);
         return $this;
     }
     /**
-     * @var int[]
+     * @return string
      */
-    private $offset = array(16, 0);
+    public function getDisplayGamma()
+    {
+        return $this->edid->getBitField($this->offset);
+    }
 }

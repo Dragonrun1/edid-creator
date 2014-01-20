@@ -86,6 +86,6 @@ class ProductCode extends AbstractEdidAwareComponent
      */
     public function getProductCode()
     {
-        return $this->edid->getBitField($this->fieldLength, $this->offset);
+        return $this->edid->getBitField($this->offset, $this->fieldLength);
     }
 }

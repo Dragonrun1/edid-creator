@@ -87,7 +87,6 @@ abstract class AbstractEdidAwareComponent implements EdidAwareInterface,
         if (is_int($value)) {
             $value =
                 str_pad(decbin(abs($value)), $fieldLength, '0', STR_PAD_LEFT);
-            $vCount = strlen($value);
         } elseif (is_string($value)) {
             $value = strtoupper($value);
             $prefix = substr($value, 0, 2);
@@ -99,7 +98,6 @@ abstract class AbstractEdidAwareComponent implements EdidAwareInterface,
                     throw new \DomainException($mess);
                 }
                 $value = $this->hexadecimalStringToBinaryString($value);
-                $vCount = strlen($value);
             } elseif ($prefix == '0B') {
                 if ($vCount != strspn($value, '01')) {
                     $mess = '$value is NOT a binary integer string';
@@ -114,6 +112,7 @@ abstract class AbstractEdidAwareComponent implements EdidAwareInterface,
                 . gettype($value);
             throw new \InvalidArgumentException($mess);
         }
+        $vCount = strlen($value);
         if ($vCount != $fieldLength) {
             $mess = 'Binary integer MUST be '
                 . $fieldLength
@@ -125,15 +124,16 @@ abstract class AbstractEdidAwareComponent implements EdidAwareInterface,
     }
     /**
      * @param string $value
+     * @param int    $padLength
      *
      * @return string
      */
-    protected function hexadecimalStringToBinaryString($value)
+    protected function hexadecimalStringToBinaryString($value, $padLength = 4)
     {
         $value = str_split($value);
         $bits = '';
         foreach ($value as $v) {
-            $bits .= str_pad(decbin(hexdec($v)), 4, '0', STR_PAD_LEFT);
+            $bits .= str_pad(decbin(hexdec($v)), $padLength, '0', STR_PAD_LEFT);
         }
         return $bits;
     }

@@ -41,6 +41,48 @@ class ManufacturerCode extends AbstractEdidAwareComponent
     /**
      * @param string|int $value
      *
+     * @throws \InvalidArgumentException
+     * @throws \LengthException
+     * @throws \DomainException
+     * @return self
+     */
+    public function __invoke($value)
+    {
+        $method = 'set' . basename(__CLASS__);
+        return $this->$method($value);
+    }
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $method = 'get' . basename(__CLASS__);
+        return $this->$method();
+    }
+    /**
+     * @return string
+     */
+    public function getManufactureCodeAsAsciiString()
+    {
+        $bitmap = $this->getManufacturerCode();
+        $chars = '';
+        $charBits = 5;
+        $ord = 64;
+        $chars .= chr(bindec(substr($bitmap, 1, $charBits)) + $ord);
+        $chars .= chr(bindec(substr($bitmap, 6, $charBits)) + $ord);
+        $chars .= chr(bindec(substr($bitmap, 11, $charBits)) + $ord);
+        return $chars;
+    }
+    /**
+     * @return string
+     */
+    public function getManufacturerCode()
+    {
+        return $this->edid->getBitField($this->offset, $this->fieldLength);
+    }
+    /**
+     * @param string|int $value
+     *
      * @throws \RangeException
      * @throws \InvalidArgumentException
      * @throws \LengthException
@@ -72,38 +114,38 @@ class ManufacturerCode extends AbstractEdidAwareComponent
         if (is_int($value)) {
             $value =
                 str_pad(decbin(abs($value)), $fieldLength, '0', STR_PAD_LEFT);
-            $vCount = strlen($value);
         } elseif (is_string($value)) {
             $value = strtoupper($value);
-            $prefix = substr($value, 0, 2);
-            $value = substr($value, 2);
-            $vCount = strlen($value);
-            if ($prefix == '0X') {
-                if ($vCount != strspn($value, '0123456789ABCDEF')) {
-                    $mess = '$value is NOT a hexadecimal string';
-                    throw new \DomainException($mess);
-                }
-                $value = $this->hexadecimalStringToBinaryString($value);
-                $vCount = strlen($value);
-            } elseif ($prefix == '0B') {
-                if ($vCount != strspn($value, '01')) {
-                    $mess = '$value is NOT a binary integer string';
-                    throw new \DomainException($mess);
-                }
-            } elseif ($vCount == 3) {
+            if (strlen($value) == 3) {
                 $value =
                     $this->charManufacturerCodeToBinaryIntegerString($value);
-                $vCount = strlen($value);
             } else {
-                $mess = '$value MUST be prefixed hexadecimal or binary '
-                    . 'or 3 character alphabetic string';
-                throw new \DomainException($mess);
+                $prefix = substr($value, 0, 2);
+                $value = substr($value, 2);
+                $vCount = strlen($value);
+                if ($prefix == '0X') {
+                    if ($vCount != strspn($value, '0123456789ABCDEF')) {
+                        $mess = '$value is NOT a hexadecimal string';
+                        throw new \DomainException($mess);
+                    }
+                    $value = $this->hexadecimalStringToBinaryString($value);
+                } elseif ($prefix == '0B') {
+                    if ($vCount != strspn($value, '01')) {
+                        $mess = '$value is NOT a binary integer string';
+                        throw new \DomainException($mess);
+                    }
+                } else {
+                    $mess = '$value MUST be prefixed hexadecimal or binary '
+                        . 'or 3 character alphabetic string';
+                    throw new \DomainException($mess);
+                }
             }
         } else {
             $mess = '$value MUST be a string or an integer but received '
                 . gettype($value);
             throw new \InvalidArgumentException($mess);
         }
+        $vCount = strlen($value);
         if ($vCount != $fieldLength) {
             $mess = 'Binary integer MUST be '
                 . $fieldLength
@@ -113,6 +155,14 @@ class ManufacturerCode extends AbstractEdidAwareComponent
         }
         return $value;
     }
+    /**
+     * @var int
+     */
+    private $fieldLength = 16;
+    /**
+     * @var int[]
+     */
+    private $offset = array(8, 0);
     /**
      * @param string $value
      *
@@ -134,42 +184,6 @@ class ManufacturerCode extends AbstractEdidAwareComponent
             }
             $bitmap = ($bitmap << 5) | ($ord - $ordAMinusOne);
         }
-        return decbin($bitmap);
-    }
-    /**
-     * @param string|int $value
-     *
-     * @throws \InvalidArgumentException
-     * @throws \LengthException
-     * @throws \DomainException
-     * @return self
-     */
-    public function __invoke($value)
-    {
-        $method = 'set' . basename(__CLASS__);
-        return $this->$method($value);
-    }
-    /**
-     * @var int
-     */
-    private $fieldLength = 8;
-    /**
-     * @var int[]
-     */
-    private $offset = array(8, 0);
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        $method = 'get' . basename(__CLASS__);
-        return $this->$method();
-    }
-    /**
-     * @return string
-     */
-    public function getManufacturerCode()
-    {
-        return $this->edid->getBitField($this->fieldLength, $this->offset);
+        return str_pad(decbin($bitmap), $this->fieldLength, '0', \STR_PAD_LEFT);
     }
 }

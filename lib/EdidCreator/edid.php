@@ -48,17 +48,18 @@ class Edid implements EdidBitFieldInterface, EdidComponentInterface
         $this->setEdid($edid);
     }
     /**
-     * @param integer       $bitLength
      * @param integer|array $offset
+     *
+     * @param integer $fieldLength
      *
      * @throws \InvalidArgumentException
      * @throws \OverflowException
      * @return string
      */
-    public function getBitField($bitLength, $offset)
+    public function getBitField($offset, $fieldLength = 8)
     {
-        if (!is_int($bitLength)) {
-            $mess = 'Can only use integer for $bitLength';
+        if (!is_int($fieldLength)) {
+            $mess = 'Can only use integer for $fieldLength';
             throw new \InvalidArgumentException($mess);
         }
         if (is_array($offset)) {
@@ -68,13 +69,14 @@ class Edid implements EdidBitFieldInterface, EdidComponentInterface
                 . gettype($offset);
             throw new \InvalidArgumentException($mess);
         }
-        $bitLength = abs((int)$bitLength);
+        $fieldLength = abs((int)$fieldLength);
         $offset = abs((int)$offset);
-        if (($bitLength + $offset) > Edid::MAX_BIT_FIELD_LENGTH) {
-            $mess = '$bitLength plus $offset exceeds maximum field length';
+        if (($fieldLength + $offset) > Edid::MAX_BIT_FIELD_LENGTH) {
+            $mess = '$fieldLength plus $offset exceeds maximum field length';
             throw new \OverflowException($mess);
         }
-        $bits = substr($this->getEdid(), -($bitLength + $offset), $bitLength);
+        $bits =
+            substr($this->getEdid(), -($fieldLength + $offset), $fieldLength);
         return $bits;
     }
     /**

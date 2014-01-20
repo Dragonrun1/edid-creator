@@ -37,12 +37,13 @@ namespace EdidCreator;
 interface EdidBitFieldInterface
 {
     /**
-     * @param integer       $bitLength
      * @param integer|array $offset
      *
-     * @return resource
+     * @param integer       $fieldLength
+     *
+     * @return string
      */
-    public function getBitField($bitLength, $offset);
+    public function getBitField($offset, $fieldLength = 8);
     /**
      * @param string        $value
      * @param integer|array $offset

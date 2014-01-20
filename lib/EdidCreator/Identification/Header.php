@@ -43,7 +43,7 @@ class Header extends AbstractEdidAwareComponent
      */
     public function getHeader()
     {
-        return $this->edid->getBitField($this->fieldLength, $this->offset);
+        return $this->edid->getBitField($this->offset, $this->fieldLength);
     }
     /**
      * @param string|int $value

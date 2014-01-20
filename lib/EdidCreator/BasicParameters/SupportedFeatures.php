@@ -1,12 +1,11 @@
 <?php
 /**
- * Contains VideoInputDefinition class.
+ * Contains SupportedFeatures class.
  *
  * PHP version 5.3
  *
  * LICENSE:
- * This file is part of edid-creater which can be used to create a version 1.3 Extended Display Identification Data
- * binary file.
+ * This file is part of edid-creater
  * Copyright (C) 2014 Michael Cummings
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -32,11 +31,11 @@ namespace EdidCreator\BasicParameters;
 use EdidCreator\AbstractEdidAwareComponent;
 
 /**
- * Class VideoInputDefinition
+ * Class SupportedFeatures
  *
- * @package EdidCreator
+ * @package EdidCreator\BasicParameters
  */
-class VideoInputDefinition extends AbstractEdidAwareComponent
+class SupportedFeatures extends AbstractEdidAwareComponent
 {
     /**
      * @param string|int $value
@@ -62,102 +61,63 @@ class VideoInputDefinition extends AbstractEdidAwareComponent
     /**
      * @return string
      */
-    public function getSignalLevel()
+    public function getDisplayType()
     {
-        $fieldLength = 1;
-        $offset = array(20, 7);
-        return $this->edid->getBitField($offset, $fieldLength);
-    }
-    /**
-     * @throws \LogicException
-     * @return string
-     */
-    public function getSignalingStandard()
-    {
-        if ($this->isDigitalSignalLevel()) {
-            $mess = 'SignalingStandard is only used with analog signal level';
-            throw new \LogicException($mess);
-        }
         $fieldLength = 2;
-        $offset = array(20, 5);
+        $offset = array(24, 3);
         return $this->edid->getBitField($offset, $fieldLength);
     }
     /**
-     * @throws \LogicException
      * @return string
      */
-    public function getSupportedSyncs()
+    public function getDpms()
     {
-        if ($this->isDigitalSignalLevel()) {
-            $mess = 'SignalingStandard is only used with analog signal level';
-            throw new \LogicException($mess);
-        }
-        $fieldLength = 4;
-        $offset = array(20, 1);
+        $fieldLength = 3;
+        $offset = array(24, 5);
         return $this->edid->getBitField($offset, $fieldLength);
     }
     /**
      * @return string
      */
-    public function getVideoInputDefinition()
+    public function getSupportedFeatures()
     {
         return $this->edid->getBitField($this->offset);
     }
     /**
-     * @throws \LogicException
      * @return bool
      */
-    public function hasSetup()
+    public function isDefaultGtfSupported()
     {
-        if ($this->isDigitalSignalLevel()) {
-            $mess = 'Setup is only used with analog signal level';
-            throw new \LogicException($mess);
-        }
         $fieldLength = 1;
-        $offset = array(20, 4);
+        $offset = array(24, 0);
         return (bool)$this->edid->getBitField($offset, $fieldLength);
     }
     /**
      * @return bool
      */
-    public function isAnalogSignalLevel()
+    public function isPreferredTimingMode()
     {
-        return !(bool)$this->getSignalLevel();
-    }
-    /**
-     * @throws \LogicException
-     * @return bool
-     */
-    public function isDfp()
-    {
-        if ($this->isAnalogSignalLevel()) {
-            $mess = 'DFP is only used with digital signal level';
-            throw new \LogicException($mess);
-        }
         $fieldLength = 1;
-        $offset = array(20, 0);
+        $offset = array(24, 1);
         return (bool)$this->edid->getBitField($offset, $fieldLength);
     }
     /**
      * @return bool
      */
-    public function isDigitalSignalLevel()
+    public function isStandardColorSpace()
     {
-        return (bool)$this->getSignalLevel();
+        $fieldLength = 1;
+        $offset = array(24, 2);
+        return (bool)$this->edid->getBitField($offset, $fieldLength);
     }
     /**
      * @param bool $value
      *
-     * @throws \LogicException
      * @throws \InvalidArgumentException
      * @return self
      */
-    public function setDfp($value)
+    public function setDefaultGtfSupported($value)
     {
-        if ($this->isAnalogSignalLevel()) {
-            $mess = 'DFP can only be set if mode is digital';
-            throw new \LogicException($mess);
-        }
         if (is_bool($value)) {
             $value = $value ? '1' : '0';
         } else {
@@ -165,77 +125,20 @@ class VideoInputDefinition extends AbstractEdidAwareComponent
                 . gettype($value);
             throw new \InvalidArgumentException($mess);
         }
-        $this->edid->setBitField($value, $this->offset);
-        return $this;
-    }
-    /**
-     * @param bool $value
-     *
-     * @throws \LogicException
-     * @return self
-     */
-    public function setSetup($value)
-    {
-        if ($this->isDigitalSignalLevel()) {
-            $mess = 'Setup is only used with analog signal level';
-            throw new \LogicException($mess);
-        }
-        if (is_bool($value)) {
-            $value = $value ? '1' : '0';
-        } else {
-            $mess = '$value MUST be a boolean but received '
-                . gettype($value);
-            throw new \InvalidArgumentException($mess);
-        }
-        $offset = array(20, 4);
-        $this->edid->setBitField($value, $offset);
-        return $this;
-    }
-    /**
-     * @param string $value
-     *
-     * @throws \InvalidArgumentException
-     * @throws \DomainException
-     * @return self
-     */
-    public function setSignalLevel($value)
-    {
-        if (is_string($value)) {
-            $value = strtolower($value);
-            if ($value == 'analog') {
-                $value = '0';
-            } elseif ($value = 'digital') {
-                $value = '1';
-            } else {
-                $mess = 'Unknown signal level ' . $value;
-                throw new \DomainException($mess);
-            }
-        } elseif (is_bool($value)) {
-            $value = $value ? '1' : '0';
-        } else {
-            $mess = '$value MUST be a boolean or a string but received '
-                . gettype($value);
-            throw new \InvalidArgumentException($mess);
-        }
-        $offset = array(20, 7);
+        $offset = array(24, 0);
         $this->edid->setBitField($value, $offset);
         return $this;
     }
     /**
      * @param string|int $value
      *
-     * @throws \LogicException
      * @throws \InvalidArgumentException
      * @throws \LengthException
      * @throws \DomainException
      * @return self
      */
-    public function setSignalingStandard($value)
+    public function setDisplayType($value)
     {
-        if ($this->isDigitalSignalLevel()) {
-            $mess = 'SignalingStandard is only used with analog signal level';
-            throw new \LogicException($mess);
-        }
         $fieldLength = 2;
         if (is_int($value)) {
             $value =
@@ -278,26 +181,22 @@ class VideoInputDefinition extends AbstractEdidAwareComponent
                 . $vCount;
             throw new \LengthException($mess);
         }
-        $offset = array(20, 5);
+        $offset = array(24, 3);
         $this->edid->setBitField($value, $offset);
         return $this;
     }
     /**
      * @param string|int $value
      *
-     * @throws \LogicException
      * @throws \InvalidArgumentException
      * @throws \LengthException
      * @throws \DomainException
+     *
      * @return self
      */
-    public function setSupportedSyncs($value)
+    public function setDpms($value)
     {
-        if ($this->isDigitalSignalLevel()) {
-            $mess = 'SupportedSyncs is only used with analog signal level';
-            throw new \LogicException($mess);
-        }
-        $fieldLength = 4;
+        $fieldLength = 3;
         if (is_int($value)) {
             $value =
                 str_pad(decbin(abs($value)), $fieldLength, '0', STR_PAD_LEFT);
@@ -339,7 +238,45 @@ class VideoInputDefinition extends AbstractEdidAwareComponent
                 . $vCount;
             throw new \LengthException($mess);
         }
-        $offset = array(20, 1);
+        $offset = array(24, 5);
+        $this->edid->setBitField($value, $offset);
+        return $this;
+    }
+    /**
+     * @param bool $value
+     *
+     * @throws \InvalidArgumentException
+     * @return self
+     */
+    public function setPreferredTimingMode($value)
+    {
+        if (is_bool($value)) {
+            $value = $value ? '1' : '0';
+        } else {
+            $mess = '$value MUST be a boolean but received '
+                . gettype($value);
+            throw new \InvalidArgumentException($mess);
+        }
+        $offset = array(24, 1);
+        $this->edid->setBitField($value, $offset);
+        return $this;
+    }
+    /**
+     * @param bool $value
+     *
+     * @throws \InvalidArgumentException
+     * @return self
+     */
+    public function setStandardColorSpace($value)
+    {
+        if (is_bool($value)) {
+            $value = $value ? '1' : '0';
+        } else {
+            $mess = '$value MUST be a boolean but received '
+                . gettype($value);
+            throw new \InvalidArgumentException($mess);
+        }
+        $offset = array(24, 2);
         $this->edid->setBitField($value, $offset);
         return $this;
     }
@@ -351,18 +288,14 @@ class VideoInputDefinition extends AbstractEdidAwareComponent
      * @throws \DomainException
      * @return self
      */
-    public function setVideoInputDefinition($value)
+    public function setSupportedFeatures($value)
     {
         $value = $this->convertValueToBitString($value);
-        if ($value > '10000001') {
-            $mess = 'Bits 1-6 are reserved';
-            throw new \DomainException($mess);
-        }
         $this->edid->setBitField($value, $this->offset);
         return $this;
     }
     /**
      * @var int[]
      */
-    private $offset = array(20, 0);
+    private $offset = array(24, 0);
 }
